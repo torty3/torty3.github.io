@@ -54,7 +54,6 @@ var centreLatLng = {lat:51.5080, lng:-0.1258};
 var clicker;
 var listings = [];
 var queryList = [];
-var listArr = [];
         
 function parser(string){
     listings = [];
@@ -63,8 +62,7 @@ function parser(string){
     string = string.replace(/{{vCard/g,'{{listing');
     
     var listRegex = /{{(listing[^}]*)}}/g;
-    
-    listArr = string.match(listRegex);
+    var listArr = string.match(listRegex);
     for (var i=0; i<listArr.length; i++) {
         var listObj = new Object();
         var listParams = listArr[i].split('|');
@@ -84,7 +82,6 @@ function batchSearch() {
     queryList = [];
     var textBox = document.getElementById("nolatlng");
     parser(textBox.value);
-    
     var areaBox = ' ' + document.getElementById("area").value;
 
     // mapquest bug, no results shown if first result is null
@@ -96,13 +93,14 @@ function batchSearch() {
         if (isWhitespaceOrEmpty(listings[i].lat)) {
             queryList.push(i);
             if (searchType && !isWhitespaceOrEmpty(listings[i].address)) {
-                query += "&location=" + listings[i].address.replace(/#.*/,"") + ", " + areaBox;
+                query += "&location=" + listings[i].address.replace(/#.*|.*\//,"") + ", " + areaBox;
             }
             else {
-                query += "&location=" + listings[i].name.replace(/\u2019/,"") + ", " + areaBox;
+                query += "&location=" + listings[i].name.replace(/\u0026|\u2019/,"") + ", " + areaBox;
             }
         }
     }
+    
     var searchURL  = BATCH_POST + query;
     //alert(searchURL);
     document.getElementById("stats").value = "Looking for "+queryList.length+" listings...";
@@ -122,7 +120,9 @@ function renderBatch(response) {
         for (var i = 1; i < response.results.length; i++) {
             // set maxResults as one, so only one location
             var location = response.results[i].locations[0];
-            if (isWhitespaceOrEmpty(listings[queryList[i-1]].lat) && location != undefined) {
+            
+            // assign dummy latlngs if not defined
+            if (location != undefined) {
                 listings[queryList[i-1]].lat = parseFloat(location.latLng.lat).toFixed(FXPT)+' ';
                 listings[queryList[i-1]]["long"] = parseFloat(location.latLng.lng).toFixed(FXPT)+' ';
             } 
@@ -157,7 +157,7 @@ function insertLatLng () {
     }
 
     var textBox = document.getElementById("withlatlng");
-    textBox.value = "" + oldStr;
+    textBox.value = oldStr;
 
 }
 
@@ -165,6 +165,9 @@ function mapFittedListings() {
     if (listings.length == 0) {
         parser(document.getElementById("nolatlng").value);
         singleSearch(document.getElementById("area").value);
+    }
+    else {
+        parser(document.getElementById("withlatlng").value);
     }
     mapListings();
 }
@@ -327,6 +330,7 @@ function updateMarker (latLng) {
 2. Enter the city these listings belong to (above).
 3. This searches OpenStreetMap based on either name or address (select above).
 4. Drag and drop markers to adjust geographical coordinates.
+WARNING: Do not remove ?s until all editing is stopped.
 
 Results may vary depending on whether OSM has these names/addresses in their database (they may have one but not the other).
 Check addresses carefully, returned coordinates may only point to the start/end of the street.
