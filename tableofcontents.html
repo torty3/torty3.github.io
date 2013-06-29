@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test</title>
+<style>
+
+
+
+
+
+/*------------------------------------*\
+    MAIN
+\*------------------------------------*/
+html{
+    height:101%;
+    background:#fff url(/img/css/bg.gif) top left repeat-x;
+}
+body{
+    font-family:Arial,Verdana,sans-serif;
+    font-size:0.75em;
+}
+
+
+.topbanner {
+    position: relative;
+    max-width: 1800px; 
+    height: auto;
+    overflow: visible; !important
+}
+
+.topbanner .name {
+    position: absolute; 
+    z-index: 2; 
+    margin: 0.6em 0 0 0.4em; 
+    padding: 8px 7px; 
+    font-size: 2.2em; 
+    background: rgb(16,16,16); 
+    background: rgba(0,0,0,0.5); 
+    border-radius: 4px; 
+    color: white;
+    white-space: nowrap;
+    line-height: 0.9em;
+}
+/*** Styling table of contents into a alist and dropdown menus ***/
+.alist ul ul, ul ul ul {
+    display: block;
+    white-space: nowrap;
+}
+ 
+.alist #toc > tbody > tr > td > ul, #toc > tr > td > ul {
+    padding: 0 2em 0 0;
+    margin: 0;
+}
+
+/* hide toc number */
+.tocnumber { display: none; }
+
+/* display of toc table, stretch across page */
+.alist #toc.tocFloat {
+    width: 100%; 
+    max-width: 170em;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+.alist.tocbox-s #toc.tocFloat {
+    background-color: #e0e0e0; 
+}
+ 
+.alist.tocbox-b #toc.tocFloat {
+    color: white;
+    background: rgb(16,16,16); 
+    background: rgba(0,0,0,0.5); 
+}
+ 
+.alist.tocbox-w #toc.tocFloat {
+    background: rgb(225,225,225); 
+    background: rgba(160,160,160,0.6); 
+}
+
+/* links in the horizontal ToC should be black... */
+.alist #toc a {
+    color: black;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-decoration: none;
+}
+ 
+/* ... except when the ToC box is black ... */
+.alist.tocbox-b #toc a {
+    color: white;
+}
+ 
+/* ... or except when being hovered over */
+.alist #toc.tocFloat a:hover {
+    color: #bdddfd;
+    text-decoration: underline;
+}
+
+/* input dot separators */
+.alist li.toclevel-1:after {
+    content: "· ";
+    font-weight: bold;
+    padding: 0 0.3em;
+}
+.alist li:last-child:after {
+    content: none;
+}
+ 
+/* only display toclevel-2 on hover */
+.alist ul ul {
+    //display: none;
+}
+    .alist ul li:hover {
+        background: #4b545f;
+    }
+    .alist ul li:hover > ul {
+        display: block; !important
+    }
+
+/* display of toclevel-1 */
+.alist ul {
+    list-style: none;
+    position: relative;
+    display:block;
+}
+    .alist ul:after {
+        content: ""; clear: both; display: block;
+    }
+
+    /* force horizontal menu */
+    .alist ul li {
+        float: left;
+    }
+    .alist ul li a {
+        display:inline-block; padding: 2px 2px;
+    }
+
+    /* display of toclevel-2 */
+    .alist ul ul {
+        background: rgb(134,144,157); border-radius: 0px; padding: 0;
+        position: absolute; top: 100%;
+    }
+        .alist ul ul li {
+            float: none; 
+            border-bottom: 1px solid #8d97a3; position: relative;
+        }
+        .alist ul ul li a {
+            display:block; padding: 4px 8px;
+            color: #fff;
+        }    
+        .alist ul ul li a:hover {
+            background: #4b545f;
+        }
+
+        /* display of toclevel-3 */
+        .alist ul ul ul {
+            position: absolute; left: 100%; top:0;
+            background: #919aa7;
+        }
+
+/* don't display ToC title when in horizontal ToC */
+.alist #toctitle {
+    display: none;
+}
+ 
+.mf-mobile-only {
+    display: none;
+}
+    
+.alist #toc .toclevel-4,
+.alist #toc .toclevel-5,
+.alist #toc .toclevel-6 {
+    display: none;
+}
+
+.alist .toggleNode {
+    display: none;
+}
+
+/* hide toc levels if screen is too small */
+@media (max-width: 1024px) {
+    .alist #toc .toclevel-2,
+    .alist #toc .toclevel-3 {
+        display: none;
+    }
+}
+
+</style>
+
+</head>
+<body>
+<div class="topbanner">
+<div class="alist tocbox-w">
+<table id="toc" class="toc tocFloat">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div><ul>
+<li class="toclevel-1 tocsection-1"><a href="#Districts"><span class="tocnumber">1</span> <span class="toctext">Districts</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Downtown"><span class="tocnumber">1.1</span> <span class="toctext">Downtown</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Inner_suburbs"><span class="tocnumber">1.2</span> <span class="toctext">Inner suburbs</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Outer_suburbs"><span class="tocnumber">1.3</span> <span class="toctext">Outer suburbs</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#The_islands"><span class="tocnumber">1.4</span> <span class="toctext">The islands</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Other_areas"><span class="tocnumber">2</span> <span class="toctext">Other areas</span></a>
+<ul>
+<li class="toclevel-2 tocsection-7"><a href="#Central_areas"><span class="tocnumber">2.1</span> <span class="toctext">Central areas</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#French_Concession"><span class="tocnumber">2.2</span> <span class="toctext">French Concession</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Water_towns"><span class="tocnumber">2.3</span> <span class="toctext">Water towns</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="#Understand"><span class="tocnumber">3</span> <span class="toctext">Understand</span></a>
+<ul>
+<li class="toclevel-2 tocsection-11"><a href="#Economy"><span class="tocnumber">3.1</span> <span class="toctext">Economy</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="#History"><span class="tocnumber">3.2</span> <span class="toctext">History</span></a></li>
+<li class="toclevel-2 tocsection-13"><a href="#Climate"><span class="tocnumber">3.3</span> <span class="toctext">Climate</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-14"><a href="#Get_in"><span class="tocnumber">4</span> <span class="toctext">Get in</span></a>
+<ul>
+<li class="toclevel-2 tocsection-15"><a href="#By_plane"><span class="tocnumber">4.1</span> <span class="toctext">By plane</span></a>
+<ul>
+<li class="toclevel-3 tocsection-16"><a href="#Pudong_Airport"><span class="tocnumber">4.1.1</span> <span class="toctext">Pudong Airport</span></a></li>
+<li class="toclevel-3 tocsection-17"><a href="#Hongqiao_Airport"><span class="tocnumber">4.1.2</span> <span class="toctext">Hongqiao Airport</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-18"><a href="#By_train"><span class="tocnumber">4.2</span> <span class="toctext">By train</span></a></li>
+<li class="toclevel-2 tocsection-19"><a href="#By_car"><span class="tocnumber">4.3</span> <span class="toctext">By car</span></a></li>
+<li class="toclevel-2 tocsection-20"><a href="#By_bus"><span class="tocnumber">4.4</span> <span class="toctext">By bus</span></a></li>
+<li class="toclevel-2 tocsection-21"><a href="#By_boat"><span class="tocnumber">4.5</span> <span class="toctext">By boat</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-22"><a href="#Get_around"><span class="tocnumber">5</span> <span class="toctext">Get around</span></a>
+<ul>
+<li class="toclevel-2 tocsection-23"><a href="#Metro_cards"><span class="tocnumber">5.1</span> <span class="toctext">Metro cards</span></a></li>
+<li class="toclevel-2 tocsection-24"><a href="#By_metro"><span class="tocnumber">5.2</span> <span class="toctext">By metro</span></a></li>
+<li class="toclevel-2 tocsection-25"><a href="#By_bus_2"><span class="tocnumber">5.3</span> <span class="toctext">By bus</span></a></li>
+<li class="toclevel-2 tocsection-26"><a href="#By_taxi"><span class="tocnumber">5.4</span> <span class="toctext">By taxi</span></a></li>
+<li class="toclevel-2 tocsection-27"><a href="#On_foot"><span class="tocnumber">5.5</span> <span class="toctext">On foot</span></a></li>
+<li class="toclevel-2 tocsection-28"><a href="#By_ferry"><span class="tocnumber">5.6</span> <span class="toctext">By ferry</span></a></li>
+<li class="toclevel-2 tocsection-29"><a href="#By_bicycle"><span class="tocnumber">5.7</span> <span class="toctext">By bicycle</span></a></li>
+<li class="toclevel-2 tocsection-30"><a href="#By_motor_vehicle"><span class="tocnumber">5.8</span> <span class="toctext">By motor vehicle</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-31"><a href="#Talk"><span class="tocnumber">6</span> <span class="toctext">Talk</span></a></li>
+<li class="toclevel-1 tocsection-32"><a href="#See"><span class="tocnumber">7</span> <span class="toctext">See</span></a></li>
+<li class="toclevel-1 tocsection-33"><a href="#Do"><span class="tocnumber">8</span> <span class="toctext">Do</span></a></li>
+<li class="toclevel-1 tocsection-34"><a href="#Learn"><span class="tocnumber">9</span> <span class="toctext">Learn</span></a>
+<ul>
+<li class="toclevel-2 tocsection-35"><a href="#Cooking"><span class="tocnumber">9.1</span> <span class="toctext">Cooking</span></a></li>
+<li class="toclevel-2 tocsection-36"><a href="#Talk_2"><span class="tocnumber">9.2</span> <span class="toctext">Talk</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-37"><a href="#Work"><span class="tocnumber">10</span> <span class="toctext">Work</span></a></li>
+<li class="toclevel-1 tocsection-38"><a href="#Buy"><span class="tocnumber">11</span> <span class="toctext">Buy</span></a>
+<ul>
+<li class="toclevel-2 tocsection-39"><a href="#Antiques"><span class="tocnumber">11.1</span> <span class="toctext">Antiques</span></a></li>
+<li class="toclevel-2 tocsection-40"><a href="#Electronics"><span class="tocnumber">11.2</span> <span class="toctext">Electronics</span></a></li>
+<li class="toclevel-2 tocsection-41"><a href="#Clothing"><span class="tocnumber">11.3</span> <span class="toctext">Clothing</span></a></li>
+<li class="toclevel-2 tocsection-42"><a href="#Groceries"><span class="tocnumber">11.4</span> <span class="toctext">Groceries</span></a></li>
+<li class="toclevel-2 tocsection-43"><a href="#Discount_cards"><span class="tocnumber">11.5</span> <span class="toctext">Discount cards</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-44"><a href="#Eat"><span class="tocnumber">12</span> <span class="toctext">Eat</span></a></li>
+<li class="toclevel-1 tocsection-45"><a href="#Drink"><span class="tocnumber">13</span> <span class="toctext">Drink</span></a></li>
+<li class="toclevel-1 tocsection-46"><a href="#Sleep"><span class="tocnumber">14</span> <span class="toctext">Sleep</span></a></li>
+<li class="toclevel-1 tocsection-47"><a href="#Connect"><span class="tocnumber">15</span> <span class="toctext">Connect</span></a></li>
+<li class="toclevel-1 tocsection-48"><a href="#Stay_safe"><span class="tocnumber">16</span> <span class="toctext">Stay safe</span></a></li>
+<li class="toclevel-1 tocsection-49"><a href="#Stay_healthy"><span class="tocnumber">17</span> <span class="toctext">Stay healthy</span></a></li>
+<li class="toclevel-1 tocsection-50"><a href="#Cope"><span class="tocnumber">18</span> <span class="toctext">Cope</span></a>
+<ul>
+<li class="toclevel-2 tocsection-51"><a href="#Newspapers"><span class="tocnumber">18.1</span> <span class="toctext">Newspapers</span></a></li>
+<li class="toclevel-2 tocsection-52"><a href="#Operator_assistance"><span class="tocnumber">18.2</span> <span class="toctext">Operator assistance</span></a></li>
+<li class="toclevel-2 tocsection-53"><a href="#Etiquette"><span class="tocnumber">18.3</span> <span class="toctext">Etiquette</span></a></li>
+<li class="toclevel-2 tocsection-54"><a href="#Visa_extensions"><span class="tocnumber">18.4</span> <span class="toctext">Visa extensions</span></a></li>
+<li class="toclevel-2 tocsection-55"><a href="#Consulates_and_citizen_services"><span class="tocnumber">18.5</span> <span class="toctext">Consulates and citizen services</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-56"><a href="#Go_next"><span class="tocnumber">19</span> <span class="toctext">Go next</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<p>Bacon ipsum dolor sit amet pastrami andouille jowl meatloaf prosciutto tenderloin. Meatloaf ribeye frankfurter short loin capicola doner ham hock, meatball short ribs hamburger corned beef bacon turkey. Drumstick sirloin pig turducken. Fatback ribeye boudin meatball, biltong beef pork rump pork chop pork loin ham hock strip steak tenderloin pig turducken. Shankle fatback turducken, t-bone ground round strip steak pig turkey tail. Filet mignon salami ham pig capicola boudin sirloin pastrami pork loin turducken. Ham hock jowl kielbasa, sirloin fatback meatball rump frankfurter pastrami.
+<p>Frankfurter pig short loin, corned beef shoulder jerky boudin leberkas meatball ham hock. Filet mignon ham shoulder pork chop tenderloin t-bone doner rump bresaola. Beef turducken shankle salami, tenderloin ribeye boudin. Brisket jerky sirloin pork loin shank doner chicken kielbasa shankle ground round. Ribeye beef ham, pancetta short ribs fatback tail chicken. Andouille turducken pig chuck short ribs, tri-tip beef ribs shank flank ground round doner hamburger tenderloin. Brisket salami tenderloin meatloaf spare ribs, turducken tri-tip andouille filet mignon.
+<p>Short loin doner strip steak, ham hock turducken bacon andouille t-bone short ribs. Ham hock pastrami turkey, pork belly short loin ribeye pork shoulder beef ribs hamburger t-bone capicola shank. Frankfurter chuck meatball sausage shank. Tenderloin capicola frankfurter meatball jowl corned beef ribeye short loin. Turkey rump pancetta tri-tip pork loin biltong strip steak boudin.
+<p>Meatloaf t-bone salami andouille pork. Prosciutto bresaola tail leberkas filet mignon. Ribeye ham hock sausage bacon tenderloin turducken capicola, doner frankfurter short ribs brisket cow. Beef chuck pork loin turducken brisket pancetta jerky swine.
+<p>Tri-tip filet mignon shoulder, rump shank turducken pork chop. Chicken bresaola brisket leberkas ball tip. Prosciutto rump jowl swine, short loin pastrami jerky kielbasa beef flank chicken. Fatback drumstick brisket prosciutto. Jerky ham chuck, pork pork loin short loin pancetta pork chop capicola hamburger turkey salami turducken ball tip. Short ribs ground round fatback pork belly sausage pork, kielbasa ham hamburger pork loin drumstick beef.
+<div class="alist tocbox-b">
+<table id="toc" class="toc tocFloat">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Understand"><span class="tocnumber">1</span> <span class="toctext">Understand</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Destinations"><span class="tocnumber">2</span> <span class="toctext">Destinations</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Africa"><span class="tocnumber">2.1</span> <span class="toctext">Africa</span></a>
+<ul>
+<li class="toclevel-3 tocsection-4"><a href="#Canary_Islands"><span class="tocnumber">2.1.1</span> <span class="toctext">Canary Islands</span></a></li>
+<li class="toclevel-3 tocsection-5"><a href="#Djibouti"><span class="tocnumber">2.1.2</span> <span class="toctext">Djibouti</span></a></li>
+<li class="toclevel-3 tocsection-6"><a href="#Egypt"><span class="tocnumber">2.1.3</span> <span class="toctext">Egypt</span></a></li>
+<li class="toclevel-3 tocsection-7"><a href="#Kenya"><span class="tocnumber">2.1.4</span> <span class="toctext">Kenya</span></a></li>
+<li class="toclevel-3 tocsection-8"><a href="#Madagascar"><span class="tocnumber">2.1.5</span> <span class="toctext">Madagascar</span></a></li>
+<li class="toclevel-3 tocsection-9"><a href="#Malawi"><span class="tocnumber">2.1.6</span> <span class="toctext">Malawi</span></a></li>
+<li class="toclevel-3 tocsection-10"><a href="#Mauritius"><span class="tocnumber">2.1.7</span> <span class="toctext">Mauritius</span></a></li>
+<li class="toclevel-3 tocsection-11"><a href="#Mozambique"><span class="tocnumber">2.1.8</span> <span class="toctext"><i>Mozambique</i></span></a></li>
+<li class="toclevel-3 tocsection-12"><a href="#Seychelles"><span class="tocnumber">2.1.9</span> <span class="toctext">Seychelles</span></a></li>
+<li class="toclevel-3 tocsection-13"><a href="#South_Africa"><span class="tocnumber">2.1.10</span> <span class="toctext"><i>South Africa</i></span></a></li>
+<li class="toclevel-3 tocsection-14"><a href="#Sudan"><span class="tocnumber">2.1.11</span> <span class="toctext">Sudan</span></a></li>
+<li class="toclevel-3 tocsection-15"><a href="#Tanzania"><span class="tocnumber">2.1.12</span> <span class="toctext">Tanzania</span></a></li>
+<li class="toclevel-3 tocsection-16"><a href="#Zimbabwe"><span class="tocnumber">2.1.13</span> <span class="toctext">Zimbabwe</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-17"><a href="#Asia"><span class="tocnumber">2.2</span> <span class="toctext">Asia</span></a>
+<ul>
+<li class="toclevel-3 tocsection-18"><a href="#Brunei"><span class="tocnumber">2.2.1</span> <span class="toctext">Brunei</span></a></li>
+<li class="toclevel-3 tocsection-19"><a href="#Burma"><span class="tocnumber">2.2.2</span> <span class="toctext">Burma</span></a></li>
+<li class="toclevel-3 tocsection-20"><a href="#Egypt_.28Sinai.29"><span class="tocnumber">2.2.3</span> <span class="toctext">Egypt (Sinai)</span></a></li>
+<li class="toclevel-3 tocsection-21"><a href="#India"><span class="tocnumber">2.2.4</span> <span class="toctext">India</span></a>
+<ul>
+<li class="toclevel-4 tocsection-22"><a href="#Andaman_and_Nicobar"><span class="tocnumber">2.2.4.1</span> <span class="toctext">Andaman and Nicobar</span></a></li>
+<li class="toclevel-4 tocsection-23"><a href="#Angria_Bank"><span class="tocnumber">2.2.4.2</span> <span class="toctext">Angria Bank</span></a></li>
+<li class="toclevel-4 tocsection-24"><a href="#Lakshadweep_Islands"><span class="tocnumber">2.2.4.3</span> <span class="toctext">Lakshadweep Islands</span></a></li>
+<li class="toclevel-4 tocsection-25"><a href="#Goa"><span class="tocnumber">2.2.4.4</span> <span class="toctext">Goa</span></a></li>
+</ul>
+</li>
+<li class="toclevel-3 tocsection-26"><a href="#Indonesia"><span class="tocnumber">2.2.5</span> <span class="toctext">Indonesia</span></a>
+<ul>
+<li class="toclevel-4 tocsection-27"><a href="#Bali"><span class="tocnumber">2.2.5.1</span> <span class="toctext">Bali</span></a></li>
+<li class="toclevel-4 tocsection-28"><a href="#Gili_Islands_and_Lombok"><span class="tocnumber">2.2.5.2</span> <span class="toctext">Gili Islands and Lombok</span></a></li>
+<li class="toclevel-4 tocsection-29"><a href="#Flores_and_Komodo_National_Park"><span class="tocnumber">2.2.5.3</span> <span class="toctext">Flores and Komodo National Park</span></a></li>
+<li class="toclevel-4 tocsection-30"><a href="#Alor_Archipelago"><span class="tocnumber">2.2.5.4</span> <span class="toctext">Alor Archipelago</span></a></li>
+<li class="toclevel-4 tocsection-31"><a href="#Sulawesi"><span class="tocnumber">2.2.5.5</span> <span class="toctext">Sulawesi</span></a></li>
+<li class="toclevel-4 tocsection-32"><a href="#Pulau_Weh.2C_Sumatra"><span class="tocnumber">2.2.5.6</span> <span class="toctext">Pulau Weh, Sumatra</span></a></li>
+<li class="toclevel-4 tocsection-33"><a href="#Papua"><span class="tocnumber">2.2.5.7</span> <span class="toctext">Papua</span></a></li>
+</ul>
+</li>
+<li class="toclevel-3 tocsection-34"><a href="#Israel"><span class="tocnumber">2.2.6</span> <span class="toctext">Israel</span></a></li>
+<li class="toclevel-3 tocsection-35"><a href="#Japan"><span class="tocnumber">2.2.7</span> <span class="toctext">Japan</span></a>
+<ul>
+<li class="toclevel-4 tocsection-36"><a href="#Honshu"><span class="tocnumber">2.2.7.1</span> <span class="toctext">Honshu</span></a></li>
+<li class="toclevel-4 tocsection-37"><a href="#Okinawa"><span class="tocnumber">2.2.7.2</span> <span class="toctext">Okinawa</span></a></li>
+<li class="toclevel-4 tocsection-38"><a href="#Miyako_Islands"><span class="tocnumber">2.2.7.3</span> <span class="toctext">Miyako Islands</span></a></li>
+<li class="toclevel-4 tocsection-39"><a href="#Yaeyama_Islands"><span class="tocnumber">2.2.7.4</span> <span class="toctext">Yaeyama Islands</span></a></li>
+</ul>
+</li>
+<li class="toclevel-3 tocsection-40"><a href="#Jordan"><span class="tocnumber">2.2.8</span> <span class="toctext">Jordan</span></a></li>
+<li class="toclevel-3 tocsection-41"><a href="#Malaysia"><span class="tocnumber">2.2.9</span> <span class="toctext">Malaysia</span></a></li>
+<li class="toclevel-3 tocsection-42"><a href="#Maldives"><span class="tocnumber">2.2.10</span> <span class="toctext">Maldives</span></a></li>
+<li class="toclevel-3 tocsection-43"><a href="#Oman"><span class="tocnumber">2.2.11</span> <span class="toctext">Oman</span></a></li>
+<li class="toclevel-3 tocsection-44"><a href="#Papua_New_Guinea"><span class="tocnumber">2.2.12</span> <span class="toctext">Papua New Guinea</span></a></li>
+<li class="toclevel-3 tocsection-45"><a href="#Philippines"><span class="tocnumber">2.2.13</span> <span class="toctext"><i>Philippines</i></span></a></li>
+<li class="toclevel-3 tocsection-46"><a href="#Saudi_Arabia"><span class="tocnumber">2.2.14</span> <span class="toctext">Saudi Arabia</span></a></li>
+<li class="toclevel-3 tocsection-47"><a href="#Thailand"><span class="tocnumber">2.2.15</span> <span class="toctext"><i>Thailand</i></span></a></li>
+<li class="toclevel-3 tocsection-48"><a href="#Timor-Leste"><span class="tocnumber">2.2.16</span> <span class="toctext"><i>Timor-Leste</i></span></a></li>
+<li class="toclevel-3 tocsection-49"><a href="#Vietnam"><span class="tocnumber">2.2.17</span> <span class="toctext">Vietnam</span></a>
+<ul>
+<li class="toclevel-4 tocsection-50"><a href="#Hon_Mun_Island_-_Marine_Park_Nha_Trang"><span class="tocnumber">2.2.17.1</span> <span class="toctext">Hon Mun Island - Marine Park Nha Trang</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-51"><a href="#Europe"><span class="tocnumber">2.3</span> <span class="toctext">Europe</span></a>
+<ul>
+<li class="toclevel-3 tocsection-52"><a href="#Belgium"><span class="tocnumber">2.3.1</span> <span class="toctext">Belgium</span></a></li>
+<li class="toclevel-3 tocsection-53"><a href="#Cyprus"><span class="tocnumber">2.3.2</span> <span class="toctext">Cyprus</span></a></li>
+<li class="toclevel-3 tocsection-54"><a href="#Iceland"><span class="tocnumber">2.3.3</span> <span class="toctext">Iceland</span></a></li>
+<li class="toclevel-3 tocsection-55"><a href="#Italy"><span class="tocnumber">2.3.4</span> <span class="toctext">Italy</span></a></li>
+<li class="toclevel-3 tocsection-56"><a href="#Malta"><span class="tocnumber">2.3.5</span> <span class="toctext">Malta</span></a></li>
+<li class="toclevel-3 tocsection-57"><a href="#Portugal"><span class="tocnumber">2.3.6</span> <span class="toctext">Portugal</span></a></li>
+<li class="toclevel-3 tocsection-58"><a href="#Sweden"><span class="tocnumber">2.3.7</span> <span class="toctext"><i>Sweden</i></span></a></li>
+<li class="toclevel-3 tocsection-59"><a href="#United_Kingdom"><span class="tocnumber">2.3.8</span> <span class="toctext"><i>United Kingdom</i></span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-60"><a href="#North_America"><span class="tocnumber">2.4</span> <span class="toctext">North America</span></a>
+<ul>
+<li class="toclevel-3 tocsection-61"><a href="#Antigua"><span class="tocnumber">2.4.1</span> <span class="toctext">Antigua</span></a></li>
+<li class="toclevel-3 tocsection-62"><a href="#Aruba"><span class="tocnumber">2.4.2</span> <span class="toctext">Aruba</span></a></li>
+<li class="toclevel-3 tocsection-63"><a href="#Diving_in_Barbados"><span class="tocnumber">2.4.3</span> <span class="toctext"><i>Diving in Barbados</i></span></a></li>
+<li class="toclevel-3 tocsection-64"><a href="#Belize"><span class="tocnumber">2.4.4</span> <span class="toctext">Belize</span></a></li>
+<li class="toclevel-3 tocsection-65"><a href="#Bequia"><span class="tocnumber">2.4.5</span> <span class="toctext">Bequia</span></a></li>
+<li class="toclevel-3 tocsection-66"><a href="#Bonaire"><span class="tocnumber">2.4.6</span> <span class="toctext">Bonaire</span></a></li>
+<li class="toclevel-3 tocsection-67"><a href="#British_Virgin_Islands"><span class="tocnumber">2.4.7</span> <span class="toctext"><i>British Virgin Islands</i></span></a></li>
+<li class="toclevel-3 tocsection-68"><a href="#Canada"><span class="tocnumber">2.4.8</span> <span class="toctext">Canada</span></a></li>
+<li class="toclevel-3 tocsection-69"><a href="#Cayman_Islands"><span class="tocnumber">2.4.9</span> <span class="toctext">Cayman Islands</span></a></li>
+<li class="toclevel-3 tocsection-70"><a href="#Cuba"><span class="tocnumber">2.4.10</span> <span class="toctext">Cuba</span></a></li>
+<li class="toclevel-3 tocsection-71"><a href="#Dominica"><span class="tocnumber">2.4.11</span> <span class="toctext">Dominica</span></a></li>
+<li class="toclevel-3 tocsection-72"><a href="#Honduras"><span class="tocnumber">2.4.12</span> <span class="toctext">Honduras</span></a></li>
+<li class="toclevel-3 tocsection-73"><a href="#Martinique"><span class="tocnumber">2.4.13</span> <span class="toctext">Martinique</span></a></li>
+<li class="toclevel-3 tocsection-74"><a href="#Mexico"><span class="tocnumber">2.4.14</span> <span class="toctext">Mexico</span></a>
+<ul>
+<li class="toclevel-4 tocsection-75"><a href="#Baja_California"><span class="tocnumber">2.4.14.1</span> <span class="toctext">Baja California</span></a></li>
+<li class="toclevel-4 tocsection-76"><a href="#Northern_Mexico"><span class="tocnumber">2.4.14.2</span> <span class="toctext">Northern Mexico</span></a></li>
+<li class="toclevel-4 tocsection-77"><a href="#Pacific_Coast"><span class="tocnumber">2.4.14.3</span> <span class="toctext">Pacific Coast</span></a></li>
+<li class="toclevel-4 tocsection-78"><a href="#Yucat.C3.A1n_Peninsula"><span class="tocnumber">2.4.14.4</span> <span class="toctext">Yucatán Peninsula</span></a></li>
+</ul>
+</li>
+<li class="toclevel-3 tocsection-79"><a href="#Nevis"><span class="tocnumber">2.4.15</span> <span class="toctext">Nevis</span></a></li>
+<li class="toclevel-3 tocsection-80"><a href="#Saba"><span class="tocnumber">2.4.16</span> <span class="toctext">Saba</span></a></li>
+<li class="toclevel-3 tocsection-81"><a href="#Saint-Barth.C3.A9lemy"><span class="tocnumber">2.4.17</span> <span class="toctext">Saint-Barthélemy</span></a></li>
+<li class="toclevel-3 tocsection-82"><a href="#Saint_Christopher_.28St_Kitts.29"><span class="tocnumber">2.4.18</span> <span class="toctext">Saint Christopher (St Kitts)</span></a></li>
+<li class="toclevel-3 tocsection-83"><a href="#Saint_Lucia"><span class="tocnumber">2.4.19</span> <span class="toctext">Saint Lucia</span></a></li>
+<li class="toclevel-3 tocsection-84"><a href="#Saint_Martin"><span class="tocnumber">2.4.20</span> <span class="toctext">Saint Martin</span></a></li>
+<li class="toclevel-3 tocsection-85"><a href="#United_States_of_America"><span class="tocnumber">2.4.21</span> <span class="toctext">United States of America</span></a>
+<ul>
+<li class="toclevel-4 tocsection-86"><a href="#California"><span class="tocnumber">2.4.21.1</span> <span class="toctext">California</span></a></li>
+<li class="toclevel-4 tocsection-87"><a href="#Florida"><span class="tocnumber">2.4.21.2</span> <span class="toctext">Florida</span></a></li>
+<li class="toclevel-4 tocsection-88"><a href="#Hawaii"><span class="tocnumber">2.4.21.3</span> <span class="toctext">Hawaii</span></a></li>
+<li class="toclevel-4 tocsection-89"><a href="#Michigan"><span class="tocnumber">2.4.21.4</span> <span class="toctext">Michigan</span></a></li>
+<li class="toclevel-4 tocsection-90"><a href="#North_Carolina"><span class="tocnumber">2.4.21.5</span> <span class="toctext">North Carolina</span></a></li>
+<li class="toclevel-4 tocsection-91"><a href="#Oregon"><span class="tocnumber">2.4.21.6</span> <span class="toctext">Oregon</span></a></li>
+<li class="toclevel-4 tocsection-92"><a href="#Utah"><span class="tocnumber">2.4.21.7</span> <span class="toctext">Utah</span></a></li>
+<li class="toclevel-4 tocsection-93"><a href="#Washington"><span class="tocnumber">2.4.21.8</span> <span class="toctext">Washington</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-94"><a href="#Oceania"><span class="tocnumber">2.5</span> <span class="toctext">Oceania</span></a>
+<ul>
+<li class="toclevel-3 tocsection-95"><a href="#Australia"><span class="tocnumber">2.5.1</span> <span class="toctext"><i>Australia</i></span></a>
+<ul>
+<li class="toclevel-4 tocsection-96"><a href="#New_South_Wales"><span class="tocnumber">2.5.1.1</span> <span class="toctext">New South Wales</span></a></li>
+<li class="toclevel-4 tocsection-97"><a href="#Queensland"><span class="tocnumber">2.5.1.2</span> <span class="toctext">Queensland</span></a></li>
+<li class="toclevel-4 tocsection-98"><a href="#South_Australia"><span class="tocnumber">2.5.1.3</span> <span class="toctext">South Australia</span></a></li>
+<li class="toclevel-4 tocsection-99"><a href="#Victoria"><span class="tocnumber">2.5.1.4</span> <span class="toctext">Victoria</span></a></li>
+<li class="toclevel-4 tocsection-100"><a href="#Western_Australia"><span class="tocnumber">2.5.1.5</span> <span class="toctext">Western Australia</span></a></li>
+</ul>
+</li>
+<li class="toclevel-3 tocsection-101"><a href="#Fiji"><span class="tocnumber">2.5.2</span> <span class="toctext">Fiji</span></a></li>
+<li class="toclevel-3 tocsection-102"><a href="#Niue"><span class="tocnumber">2.5.3</span> <span class="toctext">Niue</span></a></li>
+<li class="toclevel-3 tocsection-103"><a href="#Micronesia"><span class="tocnumber">2.5.4</span> <span class="toctext">Micronesia</span></a>
+<ul>
+<li class="toclevel-4 tocsection-104"><a href="#Chuuk"><span class="tocnumber">2.5.4.1</span> <span class="toctext"><i>Chuuk</i></span></a></li>
+<li class="toclevel-4 tocsection-105"><a href="#Guam"><span class="tocnumber">2.5.4.2</span> <span class="toctext"><i>Guam</i></span></a></li>
+<li class="toclevel-4 tocsection-106"><a href="#Palau"><span class="tocnumber">2.5.4.3</span> <span class="toctext">Palau</span></a></li>
+<li class="toclevel-4 tocsection-107"><a href="#Saipan"><span class="tocnumber">2.5.4.4</span> <span class="toctext"><i>Saipan</i></span></a></li>
+</ul>
+</li>
+<li class="toclevel-3 tocsection-108"><a href="#New_Zealand"><span class="tocnumber">2.5.5</span> <span class="toctext"><i>New Zealand</i></span></a></li>
+<li class="toclevel-3 tocsection-109"><a href="#Papua_New_Guinea_2"><span class="tocnumber">2.5.6</span> <span class="toctext">Papua New Guinea</span></a></li>
+<li class="toclevel-3 tocsection-110"><a href="#Vanuatu"><span class="tocnumber">2.5.7</span> <span class="toctext">Vanuatu</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-111"><a href="#South_America"><span class="tocnumber">2.6</span> <span class="toctext">South America</span></a>
+<ul>
+<li class="toclevel-3 tocsection-112"><a href="#Brazil"><span class="tocnumber">2.6.1</span> <span class="toctext">Brazil</span></a></li>
+<li class="toclevel-3 tocsection-113"><a href="#Colombia"><span class="tocnumber">2.6.2</span> <span class="toctext">Colombia</span></a></li>
+<li class="toclevel-3 tocsection-114"><a href="#Chile"><span class="tocnumber">2.6.3</span> <span class="toctext">Chile</span></a></li>
+<li class="toclevel-3 tocsection-115"><a href="#Ecuador"><span class="tocnumber">2.6.4</span> <span class="toctext">Ecuador</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-116"><a href="#Learn"><span class="tocnumber">3</span> <span class="toctext">Learn</span></a>
+<ul>
+<li class="toclevel-2 tocsection-117"><a href="#Beginner_courses"><span class="tocnumber">3.1</span> <span class="toctext">Beginner courses</span></a>
+<ul>
+<li class="toclevel-3 tocsection-118"><a href="#Open_water_certification"><span class="tocnumber">3.1.1</span> <span class="toctext">Open water certification</span></a></li>
+<li class="toclevel-3 tocsection-119"><a href="#Other_beginner_courses"><span class="tocnumber">3.1.2</span> <span class="toctext">Other beginner courses</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-120"><a href="#Certification_agencies"><span class="tocnumber">3.2</span> <span class="toctext">Certification agencies</span></a></li>
+<li class="toclevel-2 tocsection-121"><a href="#Advanced_training"><span class="tocnumber">3.3</span> <span class="toctext">Advanced training</span></a></li>
+<li class="toclevel-2 tocsection-122"><a href="#Technical_Diving"><span class="tocnumber">3.4</span> <span class="toctext">Technical Diving</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-123"><a href="#Get_in"><span class="tocnumber">4</span> <span class="toctext">Get in</span></a>
+<ul>
+<li class="toclevel-2 tocsection-124"><a href="#On_a_liveaboard"><span class="tocnumber">4.1</span> <span class="toctext">On a liveaboard</span></a></li>
+<li class="toclevel-2 tocsection-125"><a href="#On_a_day_trip"><span class="tocnumber">4.2</span> <span class="toctext">On a day trip</span></a></li>
+<li class="toclevel-2 tocsection-126"><a href="#From_shore"><span class="tocnumber">4.3</span> <span class="toctext">From shore</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-127"><a href="#Do"><span class="tocnumber">5</span> <span class="toctext">Do</span></a></li>
+<li class="toclevel-1 tocsection-128"><a href="#Buy"><span class="tocnumber">6</span> <span class="toctext">Buy</span></a>
+<ul>
+<li class="toclevel-2 tocsection-129"><a href="#Rent_or_buy.3F"><span class="tocnumber">6.1</span> <span class="toctext">Rent or buy?</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-130"><a href="#Work"><span class="tocnumber">7</span> <span class="toctext">Work</span></a></li>
+<li class="toclevel-1 tocsection-131"><a href="#Stay_safe"><span class="tocnumber">8</span> <span class="toctext">Stay safe</span></a>
+<ul>
+<li class="toclevel-2 tocsection-132"><a href="#Basic_safety_precautions"><span class="tocnumber">8.1</span> <span class="toctext">Basic safety precautions</span></a>
+<ul>
+<li class="toclevel-3 tocsection-133"><a href="#Checklist_on_potential_dive_operators"><span class="tocnumber">8.1.1</span> <span class="toctext">Checklist on potential dive operators</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-134"><a href="#Autonomous_and_Solo_diving"><span class="tocnumber">8.2</span> <span class="toctext">Autonomous and Solo diving</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-135"><a href="#Respect"><span class="tocnumber">9</span> <span class="toctext">Respect</span></a></li>
+<li class="toclevel-1 tocsection-136"><a href="#Stay_healthy"><span class="tocnumber">10</span> <span class="toctext">Stay healthy</span></a>
+<ul>
+<li class="toclevel-2 tocsection-137"><a href="#Health_conditions_which_prevent_diving"><span class="tocnumber">10.1</span> <span class="toctext">Health conditions which prevent diving</span></a></li>
+<li class="toclevel-2 tocsection-138"><a href="#Pressure_related_illnesses"><span class="tocnumber">10.2</span> <span class="toctext">Pressure related illnesses</span></a></li>
+<li class="toclevel-2 tocsection-139"><a href="#Preventing_dive-related_illness"><span class="tocnumber">10.3</span> <span class="toctext">Preventing dive-related illness</span></a></li>
+<li class="toclevel-2 tocsection-140"><a href="#Diving_in_high_altitude_lakes"><span class="tocnumber">10.4</span> <span class="toctext">Diving in high altitude lakes</span></a></li>
+<li class="toclevel-2 tocsection-141"><a href="#Preventing_sea_sickness"><span class="tocnumber">10.5</span> <span class="toctext">Preventing sea sickness</span></a></li>
+<li class="toclevel-2 tocsection-142"><a href="#Preventing_injuries"><span class="tocnumber">10.6</span> <span class="toctext">Preventing injuries</span></a></li>
+<li class="toclevel-2 tocsection-143"><a href="#Flying_after_diving"><span class="tocnumber">10.7</span> <span class="toctext">Flying after diving</span></a></li>
+<li class="toclevel-2 tocsection-144"><a href="#Insurance"><span class="tocnumber">10.8</span> <span class="toctext">Insurance</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+</div>
+<p>Bacon ipsum dolor sit amet esse ham magna ullamco chicken prosciutto. Jerky eu tongue excepteur, ut dolore ham hock ea kielbasa irure ground round aute esse laboris. Pariatur boudin pork belly cupidatat. Voluptate pork belly culpa id aute reprehenderit, andouille ground round leberkas salami proident tempor excepteur irure. Meatball t-bone duis, laborum quis ribeye pork chop pork loin reprehenderit brisket sint meatloaf magna aute. Non meatloaf strip steak aliqua, boudin chicken laboris swine consectetur.
+<p>Turducken aliquip reprehenderit venison tenderloin doner flank andouille sunt incididunt veniam minim. Boudin filet mignon in, aliqua elit pork loin turducken ground round eu. Tri-tip esse beef ribs, laboris laborum leberkas veniam. Esse turkey biltong cupidatat, ut swine officia eu mollit anim. Voluptate commodo dolore, quis ut excepteur exercitation officia anim esse tempor doner. Sirloin in jerky, eu kielbasa spare ribs ad sunt tempor.
+<p>Dolore tempor aliqua, mollit sausage incididunt kielbasa do est velit brisket pork chop meatball. Cow officia ribeye prosciutto, do ad chicken. Pariatur capicola aliqua spare ribs proident. Qui pariatur pork, pork belly aute in ham venison nisi turducken frankfurter ut. Leberkas ut minim dolor chuck cillum pancetta consectetur beef pig beef ribs tail. Nostrud corned beef do doner beef ribs chuck prosciutto cupidatat ut andouille cow. Consequat strip steak esse eiusmod ut doner.
+<p>Pork chop voluptate excepteur biltong, aliquip esse qui pariatur bacon boudin sirloin ham mollit enim laboris. Ut anim mollit hamburger tail proident doner ullamco. Dolore nostrud non, kielbasa est t-bone aliquip pig laborum consequat shankle et aute drumstick labore. Andouille shank pork turkey. Ground round rump capicola ullamco doner bresaola nisi chuck corned beef aute meatball.
+
+</body>
