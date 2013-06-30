@@ -48,7 +48,7 @@ h2 {
 var HOST_URL = 'http://open.mapquestapi.com/geocoding/v1/';
 var BATCH_POST = HOST_URL + 'batch?callback=renderBatch&maxResults=1&thumbMaps=false';
 var SINGLE_POST = HOST_URL + 'address?callback=renderSingle&maxResults=1&thumbMaps=false';
-var FXPT = 5;
+var FXPT = 5; // 1m accuracy
 var pois;
 var centreLatLng = {lat:51.5080, lng:-0.1258};
 var clicker;
@@ -77,11 +77,22 @@ function parser(string){
     }
     //return listings;
 }
+/*
+function geoParser(string) {
+    var geoRegex = /{{(geo[^}]*)}}/;
+    if (string.test(geoRegex)) {
+        var geoLatLng = string.match(geoRegex)[0].slice(6, -2).split('|');
+        alert(geoLatLng);
+        return true;
+    }
+    return false;
+}*/
 
 function batchSearch() {
     queryList = [];
     var textBox = document.getElementById("nolatlng");
     parser(textBox.value);
+    //geoParser(textBox.value);
     var areaBox = ' ' + document.getElementById("area").value;
 
     // mapquest bug, no results shown if first result is null
@@ -120,6 +131,17 @@ function renderBatch(response) {
         for (var i = 1; i < response.results.length; i++) {
             // set maxResults as one, so only one location
             var location = response.results[i].locations[0];
+            var bounds = 0.5; //(0.5 deg ~ 25-50km)
+           
+            // set geographical boundaries based on centreLatLng            
+            if (location != undefined) {
+                if (location.latLng.lat < (centreLatLng.lat-bounds) || location.latLng.lat > (centreLatLng.lat+bounds)) {
+                    location = undefined;
+                }
+                else if (location.latLng.lng < (centreLatLng.lng-bounds) || location.latLng.lng > (centreLatLng.lng+bounds)) {
+                    location = undefined;
+                }
+            }
             
             // assign dummy latlngs if not defined
             if (location != undefined) {
