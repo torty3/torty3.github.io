@@ -342,7 +342,9 @@ function updateMarker (latLng) {
 <body>
 <div id="main">
 <div id="form-area">
-<h2>Listings geocoder and mapper</h2>
+<h2><a href="http://en.wikivoyage.org/wiki/Wikivoyage:Dynamic_maps_Expedition#Method_2:_Geobatcher">
+WV Listings geocoder and mapper</a>
+(<a href="http://upload.wikimedia.org/wikivoyage/en/6/66/Geobatcher-screenshot.jpg">how to</a>)</h2>
 <b>City: </b><input type="text" id="area" size="30" value="London">&nbsp;&nbsp;<b>Search using: </b>
 <input type="radio" name="search-type" id="search-name" value="name">Name
 <input type="radio" name="search-type" id="search-address" value="address" checked="true">Address<br/>
@@ -351,7 +353,8 @@ function updateMarker (latLng) {
 1. Paste listings here...
 2. Enter the city these listings belong to (above).
 3. This searches OpenStreetMap based on either name or address (select above).
-4. Drag and drop markers to adjust geographical coordinates.
+4. Listings whose coordinates have been found are mapped, and those without coordinates are marked with a question mark on the map.
+5. Drag and drop markers to adjust geographical coordinates. If you don't know where the other listings are, press the Remove ?s button.
 WARNING: Do not remove ?s until all editing is stopped.
 
 Results may vary depending on whether OSM has these names/addresses in their database (they may have one but not the other).
