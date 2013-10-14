@@ -149,6 +149,8 @@ function batchSearchNominatim() {
                             alternatives.push({index: i, result: result});
                             presentAlternatives();
                         }
+                    } else {
+                        updateListing(i);
                     }
                   }
                 }(i));
@@ -191,13 +193,7 @@ function renderBatch(response, queryList) {
             }
             
             // assign dummy latlngs if not defined
-            if (location) {
-                updateListing(queryList[i-1], {lat: location.latLng.lat, lon: location.latLng.lng});
-            } else {
-                updateListing(queryList[i-1], location);
-                listings[queryList[i-1]].lat = parseFloat(centreLatLng.lat+0.001).toFixed(FXPT)+' ';
-                listings[queryList[i-1]].long = parseFloat(centreLatLng.lng+0.001).toFixed(FXPT)+' ';
-            }
+            updateListing(queryList[i-1], location && {lat: location.latLng.lat, lon: location.latLng.lng});
         }
         insertLatLng();
     }
@@ -210,9 +206,11 @@ function renderBatch(response, queryList) {
 
 function updateListing(index, location) {
     if (location) {
-       listings[index].lat = parseFloat(location.lat).toFixed(FXPT)+' ';
-       listings[index].long = parseFloat(location.lon).toFixed(FXPT)+' ';
+        listings[index].lat = parseFloat(location.lat).toFixed(FXPT)+' ';
+        listings[index].long = parseFloat(location.lon).toFixed(FXPT)+' ';
     } else {
+        listings[index].lat = parseFloat(centreLatLng.lat+0.001).toFixed(FXPT)+' ';
+        listings[index].long = parseFloat(centreLatLng.lng+0.001).toFixed(FXPT)+' ';
         listings[index].type = "question";
     }
 };
@@ -334,12 +332,11 @@ function presentAlternatives() {
         var entry = event.target;
         var index = Array.prototype.indexOf.call(entry.parentElement.childNodes, entry);
         updateListing(alt.index, alt.result[index]);
-        window.console.log('click', entry, index, alternatives);
         altElement.removeEventListener('click', listener);
         insertLatLng();
         altElement.innerHTML = '';
         alternatives.shift();
-        window.setTimeout(mapListings, 1);
+        mapListings();
     });
 };
 
