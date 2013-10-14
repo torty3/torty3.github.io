@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Listings geocoder</title>
+<meta charset="utf-8">
 <style>
 body, html {
     height: 96%;
@@ -24,6 +25,7 @@ h2 {
     height: 100%;
     float: left;
     position: relative;
+    width: 580px;
     z-index:10;
 }
 
@@ -40,20 +42,26 @@ h2 {
     margin-left: 585px;
     z-index:2;
 }
+
+#alternatives {
+    margin-left: 585px;
+}
 </style>
 <script src="http://open.mapquestapi.com/sdk/js/v7.0.s/mqa.toolkit.js?key=Fmjtd%7Cluub2l0z2u%2C72%3Do5-96yahf"></script> 
 <script type="text/javascript">
 
 /****** Batch Geocoding functions ******/
-var HOST_URL = 'http://open.mapquestapi.com/geocoding/v1/';
-var BATCH_POST = HOST_URL + 'batch?callback=renderBatch&maxResults=1&thumbMaps=false&key=Fmjtd%7Cluub256a2g%2Cba%3Do5-9urw0y';
-var SINGLE_POST = HOST_URL + 'address?callback=renderSingle&maxResults=1&thumbMaps=false&key=Fmjtd%7Cluub256a2g%2Cba%3Do5-9urw0y';
+var HOST_URL = 'http://open.mapquestapi.com/';
+var PARAMS = 'maxResults=1&thumbMaps=false&key=Fmjtd%7Cluub256a2g%2Cba%3Do5-9urw0y'
+var BATCH_POST = HOST_URL + 'geocoding/v1/batch?' + PARAMS;
+var SINGLE_POST = HOST_URL + 'geocoding/v1/address?' + PARAMS;
+var NOMINATIM_URL = HOST_URL + 'nominatim/v1/search?format=json&' + PARAMS;
 var FXPT = 5; // 1m accuracy
 var pois;
 var centreLatLng = {lat:51.5080, lng:-0.1258};
 var clicker;
 var listings = [];
-var queryList = [];
+var alternatives = [];
         
 function parser(string){
     listings = [];
@@ -89,7 +97,7 @@ function geoParser(string) {
 }*/
 
 function batchSearch() {
-    queryList = [];
+    var queryList = [];
     var textBox = document.getElementById("nolatlng");
     parser(textBox.value);
     //geoParser(textBox.value);
@@ -112,17 +120,58 @@ function batchSearch() {
         }
     }
     
-    var searchURL  = BATCH_POST + query;
-    //alert(searchURL);
     document.getElementById("stats").value = "Looking for "+queryList.length+" listings...";
     // runs mapquest batch geocoding query
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = searchURL;
-    document.body.appendChild(script);
+    runQuery(BATCH_POST + query, function(response) { renderBatch(response, queryList); });
 }
 
-function renderBatch(response) {    
+function batchSearchNominatim() {
+    var queryList = [];
+    var textBox = document.getElementById("nolatlng");
+    var areaBox = '' + document.getElementById("area").value;
+    parser(textBox.value);
+    var searchType = document.getElementById('search-address').checked;
+    //creates mapquest batch geocoding query
+    for (var i = 0; i < listings.length; i++) {
+        if (isWhitespaceOrEmpty(listings[i].lat)) {
+            queryList.push(i);
+            var query = (searchType && !isWhitespaceOrEmpty(listings[i].address)) ?
+                listings[i].address.replace(/#.*|.*\//,"") :
+                listings[i].name;
+            runQuery(NOMINATIM_URL + '&q=' + encodeURIComponent(query + ", " + areaBox),
+                function(i) {
+                  return function(result) {
+                    if (result && result.length) {
+                        updateListing(i, result[0]);
+                        insertLatLng();
+                        mapListings();
+                        if (result.length > 1) {
+                            alternatives.push({index: i, result: result});
+                            presentAlternatives();
+                        }
+                    } else {
+                        updateListing(i);
+                    }
+                  }
+                }(i));
+        }
+    }
+    document.getElementById("stats").value = "Looking for "+queryList.length+" listings...";
+    // runs mapquest batch geocoding query
+};
+
+function runQuery(url, callback) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open('GET', url, true);
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4) {
+            callback(JSON.parse(xmlHttp.responseText));
+        }
+    };
+    xmlHttp.send(null);
+};
+
+function renderBatch(response, queryList) {
     // receives mapquest batch geocoding results
     if (response.results.length > 0) {
         centreLatLng = response.results[0].locations[0].latLng;
@@ -144,15 +193,7 @@ function renderBatch(response) {
             }
             
             // assign dummy latlngs if not defined
-            if (location != undefined) {
-                listings[queryList[i-1]].lat = parseFloat(location.latLng.lat).toFixed(FXPT)+' ';
-                listings[queryList[i-1]]["long"] = parseFloat(location.latLng.lng).toFixed(FXPT)+' ';
-            } 
-            else {
-                listings[queryList[i-1]].type = "question";
-                listings[queryList[i-1]].lat = parseFloat(centreLatLng.lat+0.001).toFixed(FXPT)+' ';
-                listings[queryList[i-1]]["long"] = parseFloat(centreLatLng.lng+0.001).toFixed(FXPT)+' ';
-            }
+            updateListing(queryList[i-1], location && {lat: location.latLng.lat, lon: location.latLng.lng});
         }
         insertLatLng();
     }
@@ -161,7 +202,18 @@ function renderBatch(response) {
     }
     document.getElementById("stats").value = "Mapping...";
     mapListings();
-}
+};
+
+function updateListing(index, location) {
+    if (location) {
+        listings[index].lat = parseFloat(location.lat).toFixed(FXPT)+' ';
+        listings[index].long = parseFloat(location.lon).toFixed(FXPT)+' ';
+    } else {
+        listings[index].lat = parseFloat(centreLatLng.lat+0.001).toFixed(FXPT)+' ';
+        listings[index].long = parseFloat(centreLatLng.lng+0.001).toFixed(FXPT)+' ';
+        listings[index].type = "question";
+    }
+};
 
 function isWhitespaceOrEmpty(text) {
    return !/[^\s]/.test(text);
@@ -170,14 +222,14 @@ function isWhitespaceOrEmpty(text) {
 function insertLatLng () {
     // finds and replaces latlng in the textbox
     var oldStr = document.getElementById("nolatlng").value;
-    var latArr = oldStr.match(/lat=[^|]+/g);
-    var lngArr = oldStr.match(/long=[^|]+/g);
-    
-    for (var k = 0; k < latArr.length; k++) {
-        oldStr = oldStr.replace(latArr[k], "lat="+listings[k].lat);
-        oldStr = oldStr.replace(lngArr[k], "long="+listings[k]["long"]);
-    }
-
+    var i = 0;
+    oldStr = oldStr.replace(/lat=[^|]+/g, function() {
+        return 'lat=' + listings[i++].lat;
+    });
+    i = 0;
+    oldStr = oldStr.replace(/long=[^|]+/g, function() {
+        return 'long=' + listings[i++].long;
+    });
     var textBox = document.getElementById("withlatlng");
     textBox.value = oldStr;
 
@@ -196,6 +248,10 @@ function mapFittedListings() {
 
 function mapListings () {
     pois.removeAll();
+    if (alternatives.length) {
+        presentAlternatives();
+        return;
+    }
     // map points of interest
     for (var i = 0; i < listings.length; i++) {
         if (!isWhitespaceOrEmpty(listings[i].lat)) {
@@ -238,13 +294,8 @@ function singleSearch (textBox) {
         parseFloat(centreLatLng.lng-0.1).toFixed(FXPT) + ',' + 
         parseFloat(centreLatLng.lat-0.1).toFixed(FXPT)+','+
         parseFloat(centreLatLng.lng+0.1).toFixed(FXPT);
-    var searchURL  = SINGLE_POST + query;
-    //alert(searchURL);
     // runs mapquest single geocoding query
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = searchURL;
-    document.body.appendChild(script);
+    runQuery(SINGLE_POST + query, renderSingle);
 }
 
 function renderSingle(response) {
@@ -258,6 +309,36 @@ function renderSingle(response) {
         alert("No results found");
     }
 }
+
+function presentAlternatives() {
+    if (!alternatives.length) return;
+    var alt = alternatives[0];
+    var altElement = document.getElementById('alternatives');
+    if (altElement.innerHTML != '') return;
+    var elements = [];
+    for (var i=0; i<alt.result.length; i++) {
+        var res = alt.result[i];
+        elements.push('<li>' + res.display_name + '</li>');
+        var poi = new MQA.Poi({lat: res.lat, lng: res.lon});
+        poi.setRolloverContent((i + 1) + '. ' + res.display_name + ',<br>' + 'lat=' + res.lat +' | long=' + res.lon);
+        poi.setDeclutterMode(true);
+        pois.add(poi);
+    }
+    altElement.innerHTML = 'Found ' + alt.result.length + ' alternatives for "' + listings[alt.index].name + '".' +
+        '<ol>' + elements.join('') + '</ol>';
+    map.addShapeCollection(pois);
+    map.bestFit();
+    altElement.addEventListener('click', function listener(event) {
+        var entry = event.target;
+        var index = Array.prototype.indexOf.call(entry.parentElement.childNodes, entry);
+        updateListing(alt.index, alt.result[index]);
+        altElement.removeEventListener('click', listener);
+        insertLatLng();
+        altElement.innerHTML = '';
+        alternatives.shift();
+        mapListings();
+    });
+};
 
 function updateMarker (latLng) {
     var e=document.getElementById("locate");
@@ -364,7 +445,7 @@ Check addresses carefully, returned coordinates may only point to the start/end 
 | name=St Paul's Cathedral | url=http://www.stpauls.co.uk | email=visits@stpaulscathedral.org.uk
 | address=Ludgate Hill | lat= | long= | directions=tube: St Pauls
 | phone=+44 20 7246 8357 | tollfree= | fax=
-| hours=M-Sa 8:30AM-4PM | price=£9, £8 concession, £3.50 child (7-16), £21.50 family
+| hours=M-Sa 8:30AM-4PM | price=Â£9, Â£8 concession, Â£3.50 child (7-16), Â£21.50 family
 | content=The great domed cathedral of St Paul's, designed by Sir Christopher Wren to replace the Gothic medieval cathedral destroyed in 1666 in the Great Fire of London, was built between 1675 - 1710. It's a significant building in British history, having been the site of the funerals of several British military leaders (Nelson, Wellington, Churchill), and significantly held peace services marking the end of the two world wars. The cathedral is also famous for its ''Whispering Wall'', as well as its stunning view over the city.  The crypt is also open to the public, holding the tombs of Nelson, Wellington and Christopher Wren. For budget travelers it is possible to get in for free. The cathedral is open to the general public for free during midday service. Visitors who get in at this time won't be escorted out. To get to the top you must however hold a valid ticket.
 }}
 
@@ -372,7 +453,7 @@ Check addresses carefully, returned coordinates may only point to the start/end 
 | name=Tower Bridge | alt=technically not in the City | url=http://www.towerbridge.org.uk/ | email=enquiries@towerbridge.org.uk
 | address= | lat= | long= | directions=tube: Tower Hill
 | phone=+44 20 7403 3761 | tollfree= | fax=
-| hours=Exhibition 10AM-5PM | price=Bridge free, exhibition £6
+| hours=Exhibition 10AM-5PM | price=Bridge free, exhibition Â£6
 | content=Magnificent 19th century bridge, decorated with high towers and featuring a drawbridge. The bridge opens several times each day to permit ships to pass through - timings are dependent on demand, and are not regularly scheduled. When Tower Bridge was built, the area to the west of it was a bustling port - necessitating a bridge that could permit tall boats to pass. Now the South Bank area sits to its west, and the regenerated Butler's Wharf area of shops, reasonably-priced riverside restaurants and the London Design Museum lie to its east. For a small charge you can get the lift to the top level of the bridge and admire the view: this includes a visit to a museum dedicated to the bridge's history and engineering, and photographic exhibitions along the Walkways between the towers.
 }}
 
@@ -380,11 +461,12 @@ Check addresses carefully, returned coordinates may only point to the start/end 
 | name=Tower of London | alt=technically not in the City | url=http://www.hrp.org.uk/TowerOfLondon/ | email=visitorservices_TOL@hrp.org.uk
 | address= | lat= | long= | directions=tube: Tower Hill
 | phone=+44 8444 827777 | tollfree= | fax=
-| hours=Tu-Sa 9AM-5PM, Su M 10AM-5PM Mar-Oct; Tu-Sa 9AM-4PM, Su-M 10AM-4PM Nov-Feb | price=£14.50, aged 5-16 £9.50, concession £11, family (2A+3C) £42
+| hours=Tu-Sa 9AM-5PM, Su M 10AM-5PM Mar-Oct; Tu-Sa 9AM-4PM, Su-M 10AM-4PM Nov-Feb | price=Â£14.50, aged 5-16 Â£9.50, concession Â£11, family (2A+3C) Â£42
 | content=Founded by William the Conqueror in 1066, enlarged and modified by successive sovereigns, the Tower is today one of the world's most famous and spectacular fortresses. Discover its 900-year history as a royal palace and fortress, prison and place of execution, mint, arsenal, menagerie and jewel house. In the winter you can [[London/City_of_London#Do|skate]] on the dry moat. The Tower contains enough buildings and exhibits to keep a family busy for a full day, with plenty of both warlike and domestic contents. Beefeaters, who are all retired sergeant majors from the British Army, provide guided tours for free as well as ceremonial security. See history come alive - go to the '''Ceremony of the Keys''' at the Tower of London. This ceremony, the locking up of the Tower, has been performed every night at 10PM for 800 years.  Tickets are free but MUST be prearranged.
 }}
 </textarea><br />
 <button onclick="batchSearch()">Find coords</button>
+<button onclick="batchSearchNominatim()">Find coords (using nominatim, slower)</button>
 <button onclick="removeQuestionMarks()">Remove ?s</button>
 <button onclick="mapFittedListings()">Map listings</button>&nbsp;
 <input type="text" id="stats" size="25" style="border: 0px solid #000000; outline:none;" readonly>
@@ -400,6 +482,7 @@ Check addresses carefully, returned coordinates may only point to the start/end 
 <input type="text" id="locate" size="35" style="border: 0px solid #000000; outline:none;" readonly>
 <br />
 <div id="map"></div>
+<p id="alternatives"></div>
 </div>
 </body>
 </html> 
