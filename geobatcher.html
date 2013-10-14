@@ -212,14 +212,14 @@ function isWhitespaceOrEmpty(text) {
 function insertLatLng () {
     // finds and replaces latlng in the textbox
     var oldStr = document.getElementById("nolatlng").value;
-    var latArr = oldStr.match(/lat=[^|]+/g);
-    var lngArr = oldStr.match(/long=[^|]+/g);
-    
-    for (var k = 0; k < latArr.length; k++) {
-        oldStr = oldStr.replace(latArr[k], "lat="+listings[k].lat);
-        oldStr = oldStr.replace(lngArr[k], "long="+listings[k]["long"]);
-    }
-
+    var i = 0;
+    oldStr = oldStr.replace(/lat=[^|]+/g, function() {
+        return 'lat=' + listings[i++].lat;
+    });
+    i = 0;
+    oldStr = oldStr.replace(/long=[^|]+/g, function() {
+        return 'long=' + listings[i++].long;
+    });
     var textBox = document.getElementById("withlatlng");
     textBox.value = oldStr;
 
