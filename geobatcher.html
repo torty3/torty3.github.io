@@ -42,6 +42,10 @@ h2 {
     margin-left: 585px;
     z-index:2;
 }
+
+#alternatives {
+    margin-left: 585px;
+}
 </style>
 <script src="http://open.mapquestapi.com/sdk/js/v7.0.s/mqa.toolkit.js?key=Fmjtd%7Cluub2l0z2u%2C72%3Do5-96yahf"></script> 
 <script type="text/javascript">
@@ -57,6 +61,7 @@ var pois;
 var centreLatLng = {lat:51.5080, lng:-0.1258};
 var clicker;
 var listings = [];
+var alternatives = [];
         
 function parser(string){
     listings = [];
@@ -136,16 +141,22 @@ function batchSearchNominatim() {
             runQuery(NOMINATIM_URL + '&q=' + encodeURIComponent(query + ", " + areaBox),
                 function(i) {
                   return function(result) {
-                    updateListing(i, result[0]);
-                    insertLatLng();
-                    mapListings();
+                    if (result && result.length) {
+                        updateListing(i, result[0]);
+                        insertLatLng();
+                        mapListings();
+                        if (result.length > 1) {
+                            alternatives.push({index: i, result: result});
+                            presentAlternatives();
+                        }
+                    }
                   }
                 }(i));
         }
     }
     document.getElementById("stats").value = "Looking for "+queryList.length+" listings...";
     // runs mapquest batch geocoding query
-}
+};
 
 function runQuery(url, callback) {
     var xmlHttp = new XMLHttpRequest();
@@ -239,6 +250,10 @@ function mapFittedListings() {
 
 function mapListings () {
     pois.removeAll();
+    if (alternatives.length) {
+        presentAlternatives();
+        return;
+    }
     // map points of interest
     for (var i = 0; i < listings.length; i++) {
         if (!isWhitespaceOrEmpty(listings[i].lat)) {
@@ -296,6 +311,37 @@ function renderSingle(response) {
         alert("No results found");
     }
 }
+
+function presentAlternatives() {
+    if (!alternatives.length) return;
+    var alt = alternatives[0];
+    var altElement = document.getElementById('alternatives');
+    if (altElement.innerHTML != '') return;
+    var elements = [];
+    for (var i=0; i<alt.result.length; i++) {
+        var res = alt.result[i];
+        elements.push('<li>' + res.display_name + '</li>');
+        var poi = new MQA.Poi({lat: res.lat, lng: res.lon});
+        poi.setRolloverContent((i + 1) + '. ' + res.display_name + ',<br>' + 'lat=' + res.lat +' | long=' + res.lon);
+        poi.setDeclutterMode(true);
+        pois.add(poi);
+    }
+    altElement.innerHTML = 'Found ' + alt.result.length + ' alternatives for "' + listings[alt.index].name + '".' +
+        '<ol>' + elements.join('') + '</ol>';
+    map.addShapeCollection(pois);
+    map.bestFit();
+    altElement.addEventListener('click', function listener(event) {
+        var entry = event.target;
+        var index = Array.prototype.indexOf.call(entry.parentElement.childNodes, entry);
+        updateListing(alt.index, alt.result[index]);
+        window.console.log('click', entry, index, alternatives);
+        altElement.removeEventListener('click', listener);
+        insertLatLng();
+        altElement.innerHTML = '';
+        alternatives.shift();
+        window.setTimeout(mapListings, 1);
+    });
+};
 
 function updateMarker (latLng) {
     var e=document.getElementById("locate");
@@ -439,6 +485,7 @@ Check addresses carefully, returned coordinates may only point to the start/end 
 <input type="text" id="locate" size="35" style="border: 0px solid #000000; outline:none;" readonly>
 <br />
 <div id="map"></div>
+<p id="alternatives"></div>
 </div>
 </body>
 </html> 
