@@ -46,15 +46,16 @@ h2 {
 <script type="text/javascript">
 
 /****** Batch Geocoding functions ******/
-var HOST_URL = 'http://open.mapquestapi.com/geocoding/v1/';
-var BATCH_POST = HOST_URL + 'batch?callback=renderBatch&maxResults=1&thumbMaps=false&key=Fmjtd%7Cluub256a2g%2Cba%3Do5-9urw0y';
-var SINGLE_POST = HOST_URL + 'address?callback=renderSingle&maxResults=1&thumbMaps=false&key=Fmjtd%7Cluub256a2g%2Cba%3Do5-9urw0y';
+var HOST_URL = 'http://open.mapquestapi.com/';
+var PARAMS = 'maxResults=1&thumbMaps=false&key=Fmjtd%7Cluub256a2g%2Cba%3Do5-9urw0y'
+var BATCH_POST = HOST_URL + 'geocoding/v1/batch?' + PARAMS;
+var SINGLE_POST = HOST_URL + 'geocoding/v1/address?' + PARAMS;
+var NOMINATIM_URL = HOST_URL + 'nominatim/v1/search?format=json&' + PARAMS;
 var FXPT = 5; // 1m accuracy
 var pois;
 var centreLatLng = {lat:51.5080, lng:-0.1258};
 var clicker;
 var listings = [];
-var queryList = [];
         
 function parser(string){
     listings = [];
@@ -90,7 +91,7 @@ function geoParser(string) {
 }*/
 
 function batchSearch() {
-    queryList = [];
+    var queryList = [];
     var textBox = document.getElementById("nolatlng");
     parser(textBox.value);
     //geoParser(textBox.value);
@@ -113,17 +114,50 @@ function batchSearch() {
         }
     }
     
-    var searchURL  = BATCH_POST + query;
-    //alert(searchURL);
     document.getElementById("stats").value = "Looking for "+queryList.length+" listings...";
     // runs mapquest batch geocoding query
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = searchURL;
-    document.body.appendChild(script);
+    runQuery(BATCH_POST + query, function(response) { renderBatch(response, queryList); });
 }
 
-function renderBatch(response) {    
+function batchSearchNominatim() {
+    var queryList = [];
+    var textBox = document.getElementById("nolatlng");
+    var areaBox = '' + document.getElementById("area").value;
+    parser(textBox.value);
+    var searchType = document.getElementById('search-address').checked;
+    //creates mapquest batch geocoding query
+    for (var i = 0; i < listings.length; i++) {
+        if (isWhitespaceOrEmpty(listings[i].lat)) {
+            queryList.push(i);
+            var query = (searchType && !isWhitespaceOrEmpty(listings[i].address)) ?
+                listings[i].address.replace(/#.*|.*\//,"") :
+                listings[i].name;
+            runQuery(NOMINATIM_URL + '&q=' + encodeURIComponent(query + ", " + areaBox),
+                function(i) {
+                  return function(result) {
+                    updateListing(i, result[0]);
+                    insertLatLng();
+                    mapListings();
+                  }
+                }(i));
+        }
+    }
+    document.getElementById("stats").value = "Looking for "+queryList.length+" listings...";
+    // runs mapquest batch geocoding query
+}
+
+function runQuery(url, callback) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open('GET', url, true);
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4) {
+            callback(JSON.parse(xmlHttp.responseText));
+        }
+    };
+    xmlHttp.send(null);
+};
+
+function renderBatch(response, queryList) {
     // receives mapquest batch geocoding results
     if (response.results.length > 0) {
         centreLatLng = response.results[0].locations[0].latLng;
@@ -145,14 +179,12 @@ function renderBatch(response) {
             }
             
             // assign dummy latlngs if not defined
-            if (location != undefined) {
-                listings[queryList[i-1]].lat = parseFloat(location.latLng.lat).toFixed(FXPT)+' ';
-                listings[queryList[i-1]]["long"] = parseFloat(location.latLng.lng).toFixed(FXPT)+' ';
-            } 
-            else {
-                listings[queryList[i-1]].type = "question";
+            if (location) {
+                updateListing(queryList[i-1], {lat: location.latLng.lat, lon: location.latLng.lng});
+            } else {
+                updateListing(queryList[i-1], location);
                 listings[queryList[i-1]].lat = parseFloat(centreLatLng.lat+0.001).toFixed(FXPT)+' ';
-                listings[queryList[i-1]]["long"] = parseFloat(centreLatLng.lng+0.001).toFixed(FXPT)+' ';
+                listings[queryList[i-1]].long = parseFloat(centreLatLng.lng+0.001).toFixed(FXPT)+' ';
             }
         }
         insertLatLng();
@@ -162,7 +194,16 @@ function renderBatch(response) {
     }
     document.getElementById("stats").value = "Mapping...";
     mapListings();
-}
+};
+
+function updateListing(index, location) {
+    if (location) {
+       listings[index].lat = parseFloat(location.lat).toFixed(FXPT)+' ';
+       listings[index].long = parseFloat(location.lon).toFixed(FXPT)+' ';
+    } else {
+        listings[index].type = "question";
+    }
+};
 
 function isWhitespaceOrEmpty(text) {
    return !/[^\s]/.test(text);
@@ -239,13 +280,8 @@ function singleSearch (textBox) {
         parseFloat(centreLatLng.lng-0.1).toFixed(FXPT) + ',' + 
         parseFloat(centreLatLng.lat-0.1).toFixed(FXPT)+','+
         parseFloat(centreLatLng.lng+0.1).toFixed(FXPT);
-    var searchURL  = SINGLE_POST + query;
-    //alert(searchURL);
     // runs mapquest single geocoding query
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = searchURL;
-    document.body.appendChild(script);
+    runQuery(SINGLE_POST + query, renderSingle);
 }
 
 function renderSingle(response) {
@@ -386,6 +422,7 @@ Check addresses carefully, returned coordinates may only point to the start/end 
 }}
 </textarea><br />
 <button onclick="batchSearch()">Find coords</button>
+<button onclick="batchSearchNominatim()">Find coords (using nominatim, slower)</button>
 <button onclick="removeQuestionMarks()">Remove ?s</button>
 <button onclick="mapFittedListings()">Map listings</button>&nbsp;
 <input type="text" id="stats" size="25" style="border: 0px solid #000000; outline:none;" readonly>
